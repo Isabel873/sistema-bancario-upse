@@ -62,3 +62,36 @@ class ArbolBinarioBusqueda:
             return self._buscar_recursivo(nodo.izquierda, numero)
         else:
             return self._buscar_recursivo(nodo.derecha, numero)
+        
+    class Cliente:
+    def __init__(self, id, nombre, dni, email, tel, pwd):
+        self.id, self.nombre, self.dni, self.email, self.telefono = id, nombre, dni, email, tel
+        self.password, self.cuentas = pwd, []
+    def agregar_cuenta(self, c): self.cuentas.append(c)
+    def get_saldo_total(self): return sum(c.saldo for c in self.cuentas)
+
+class Cuenta:
+    def __init__(self, num, saldo, cliente, tipo):
+        self.numero, self.saldo, self.cliente, self.tipo = num, saldo, cliente, tipo
+        self.transacciones = []
+    def depositar(self, m):
+        if m > 0:
+            self.saldo += m
+            self.transacciones.append({'tipo':'DEPOSITO','monto':m,'fecha':datetime.now().strftime("%d/%m/%Y %H:%M")})
+            return True
+        return False
+    def retirar(self, m):
+        if m > 0 and self.puede_retirar(m):
+            self.saldo -= m
+            self.transacciones.append({'tipo':'RETIRO','monto':m,'fecha':datetime.now().strftime("%d/%m/%Y %H:%M")})
+            return True
+        return False
+    def puede_retirar(self, m): return m <= self.saldo
+    def transferir_a(self, destino, m):
+        if self.puede_retirar(m):
+            self.saldo -= m
+            destino.saldo += m
+            self.transacciones.append({'tipo':'TRANSFER ENVIADA','monto':m,'destino':destino.numero,'fecha':datetime.now().strftime("%d/%m/%Y %H:%M")})
+            destino.transacciones.append({'tipo':'TRANSFER RECIBIDA','monto':m,'origen':self.numero,'fecha':datetime.now().strftime("%d/%m/%Y %H:%M")})
+            return True
+        return False
