@@ -95,3 +95,13 @@ class Cuenta:
             destino.transacciones.append({'tipo':'TRANSFER RECIBIDA','monto':m,'origen':self.numero,'fecha':datetime.now().strftime("%d/%m/%Y %H:%M")})
             return True
         return False
+    class CuentaAhorro(Cuenta):
+    def __init__(self, num, saldo, cliente, tasa=0.03):
+        super().__init__(num, saldo, cliente, "AHORROS")
+        self.tasa_interes = tasa
+
+class CuentaCorriente(Cuenta):
+    def __init__(self, num, saldo, cliente, limite=500):
+        super().__init__(num, saldo, cliente, "CORRIENTE")
+        self.limite_sobregiro = limite
+    def puede_retirar(self, m): return m <= (self.saldo + self.limite_sobregiro)
