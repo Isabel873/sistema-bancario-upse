@@ -38,3 +38,27 @@ class ColaTransacciones:
     def encolar(self, t): self._elementos.append(t)
     def desencolar(self): return self._elementos.pop(0) if self._elementos else None
     def esta_vacia(self): return len(self._elementos) == 0
+
+    class NodoABB:
+    def __init__(self, cuenta):
+        self.cuenta, self.izquierda, self.derecha = cuenta, None, None
+
+class ArbolBinarioBusqueda:
+    def __init__(self): self.raiz = None
+    def insertar(self, cuenta): self.raiz = self._insertar_recursivo(self.raiz, cuenta)
+    def _insertar_recursivo(self, nodo, cuenta):
+        if nodo is None: return NodoABB(cuenta)
+        if cuenta.numero < nodo.cuenta.numero:
+            nodo.izquierda = self._insertar_recursivo(nodo.izquierda, cuenta)
+        else:
+            nodo.derecha = self._insertar_recursivo(nodo.derecha, cuenta)
+        return nodo
+    def buscar(self, numero): return self._buscar_recursivo(self.raiz, numero)
+    def _buscar_recursivo(self, nodo, numero):
+        if nodo is None: return None
+        if nodo.cuenta.numero == numero:
+            return nodo.cuenta
+        if numero < nodo.cuenta.numero:
+            return self._buscar_recursivo(nodo.izquierda, numero)
+        else:
+            return self._buscar_recursivo(nodo.derecha, numero)
