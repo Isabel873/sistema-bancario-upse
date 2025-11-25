@@ -384,3 +384,42 @@ def handle_deposit(self):
         if self.message:
             msg = normal_font.render(self.message, True, self.message_color)
             screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 580))
+def handle_withdraw(self):
+        if self.amount_input and self.selected_account is not None:
+            try:
+                m = float(self.amount_input.text)
+                cuenta = self.banco.cliente_actual.cuentas[self.selected_account]
+                if cuenta.retirar(m):
+                    self.banco.registrar_accion_deshacer({'tipo':'RETIRAR','cuenta':cuenta.numero,'monto':m})
+                    self.message, self.message_color = f"¡Retiro de ${m:.2f} exitoso!", GREEN
+                    self.amount_input.text, self.selected_account, self.amount_input = "", None, None
+                else:
+                    self.message, self.message_color = "Saldo insuficiente", RED
+            except:
+                self.message, self.message_color = "Ingrese un monto válido", RED
+
+    def draw_withdraw_screen(self):
+        draw_gradient_bg(screen)
+        title = header_font.render("REALIZAR RETIRO", True, GOLD)
+        screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 50))
+        c, y, self.buttons = self.banco.cliente_actual, 150, {}
+        st = normal_font.render("Seleccione una cuenta:", True, WHITE)
+        screen.blit(st, (SCREEN_WIDTH//2-st.get_width()//2, 120))
+        for i, cuenta in enumerate(c.cuentas):
+            btn = Button(SCREEN_WIDTH//2-200, y, 400, 60, f"{cuenta.tipo} N°{cuenta.numero} ${cuenta.saldo:.2f}",
+                        GREEN if cuenta.tipo=="AHORROS" else BLUE, LIGHT_BLUE)
+            btn.check_hover(pygame.mouse.get_pos()); btn.draw(screen)
+            self.buttons[f'cuenta_{i}'] = btn; y += 75
+        if self.selected_account is not None:
+            if self.amount_input is None:
+                self.amount_input = InputBox(SCREEN_WIDTH//2-150, y+20, 300, 50, "Monto a retirar")
+            self.amount_input.draw(screen)
+            bw = Button(SCREEN_WIDTH//2-150, y+100, 300, 60, "RETIRAR", ORANGE, GOLD)
+            bw.check_hover(pygame.mouse.get_pos()); bw.draw(screen)
+            self.buttons['confirm'] = bw
+        bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER", RED, ORANGE)
+        bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
+        self.buttons['back'] = bb
+        if self.message:
+            msg = normal_font.render(self.message, True, self.message_color)
+            screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 580))
