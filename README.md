@@ -4,6 +4,8 @@
 Sistema de gestión bancaria desarrollado en Python para la materia de Programación Avanzada.
 ## Autor
 - Isabel Guamán
+- Keyla holguin
+- Anete Ramos
 ## Fecha
 Noviembre 2025
 ## Funcionalidades
