@@ -256,3 +256,37 @@ Commit 10: Clase BancoApp - Inicialización y gestión de login class BancoApp:
             self.current_screen, self.message, self.message_color = "main_menu", "¡Bienvenido!", GREEN
         else:
             self.message, self.message_color = "Cédula de identidad o contraseña incorrectos", RED
+Commit 11: Pantallas de bienvenida y login                                                                                 def draw_welcome_screen(self):
+        draw_gradient_bg(screen)
+        title = title_font.render("BANCO UPSE", True, GOLD)
+        tr = title.get_rect(center=(SCREEN_WIDTH//2, 150))
+        pygame.draw.rect(screen, (0,0,0,100), tr.inflate(40,20), border_radius=20)
+        screen.blit(title, tr)
+        st = header_font.render("Sistema de Gestión Bancaria", True, WHITE)
+        screen.blit(st, (SCREEN_WIDTH//2-st.get_width()//2, 220))
+        bl = Button(SCREEN_WIDTH//2-150, 350, 300, 70, "INICIAR SESIÓN", GREEN, LIGHT_BLUE)
+        bd = Button(SCREEN_WIDTH//2-150, 440, 300, 70, "VER DEMO", ORANGE, GOLD)
+        bl.check_hover(pygame.mouse.get_pos()); bd.check_hover(pygame.mouse.get_pos())
+        bl.draw(screen); bd.draw(screen)
+        self.buttons = {'login':bl, 'demo':bd}
+        ft = small_font.render("Python & Pygame | UPSE 2024", True, GRAY)
+        screen.blit(ft, (SCREEN_WIDTH//2-ft.get_width()//2, 650))
+
+    def draw_login_screen(self):
+        draw_gradient_bg(screen)
+        title = header_font.render("INICIAR SESIÓN", True, GOLD)
+        screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 80))
+        if 'cedula' not in self.input_boxes:
+            self.input_boxes['cedula'] = InputBox(SCREEN_WIDTH//2-150, 200, 300, 50, "Cédula de identidad")
+            self.input_boxes['password'] = InputBox(SCREEN_WIDTH//2-150, 300, 300, 50, "Contraseña", True)
+        for box in self.input_boxes.values(): box.draw(screen)
+        be = Button(SCREEN_WIDTH//2-150, 400, 300, 60, "ENTRAR", GREEN, LIGHT_BLUE)
+        bb = Button(SCREEN_WIDTH//2-150, 480, 300, 50, "VOLVER", RED, ORANGE)
+        be.check_hover(pygame.mouse.get_pos()); bb.check_hover(pygame.mouse.get_pos())
+        be.draw(screen); bb.draw(screen)
+        self.buttons = {'entrar':be, 'back':bb}
+        if self.message:
+            msg = normal_font.render(self.message, True, self.message_color)
+            screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 560))
+        di = small_font.render("Demo: Cédula=0912345678 | Pass=1234", True, PURPLE)
+        screen.blit(di, (SCREEN_WIDTH//2-di.get_width()//2, 620))
