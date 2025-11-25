@@ -241,3 +241,18 @@ def draw_gradient_bg(surf):
     for y in range(SCREEN_HEIGHT):
         cv = int(10+(y/SCREEN_HEIGHT)*40)
         pygame.draw.line(surf, (cv,cv//2,cv+20), (0,y), (SCREEN_WIDTH,y))
+Commit 10: Clase BancoApp - Inicialización y gestión de login class BancoApp:
+    def __init__(self):
+        self.banco = Banco("UPSE")
+        self.current_screen, self.input_boxes, self.buttons = "welcome", {}, {}
+        self.message, self.message_color = "", GREEN
+        self.selected_account, self.selected_dest_account, self.amount_input = None, None, None
+
+    def handle_login(self):
+        cedula, pwd = self.input_boxes['cedula'].text, self.input_boxes['password'].text
+        c = self.banco.buscar_cliente_por_dni(cedula)
+        if c and c.password == pwd:
+            self.banco.cliente_actual = c
+            self.current_screen, self.message, self.message_color = "main_menu", "¡Bienvenido!", GREEN
+        else:
+            self.message, self.message_color = "Cédula de identidad o contraseña incorrectos", RED
