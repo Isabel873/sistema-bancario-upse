@@ -158,3 +158,10 @@ def registrar_accion_deshacer(self, accion):
             cuenta = self.buscar_cuenta_global(acc['cuenta'])
             if cuenta:
                 cuenta.depositar(acc['monto'])
+self.pila_rehacer.push({'tipo':'RETIRAR','cuenta':acc['cuenta'],'monto':acc['monto']})
+                return True, f"Deshacer: depósito de ${acc['monto']:.2f} en cuenta {acc['cuenta']}"
+            return False, "Cuenta no encontrada para deshacer"
+        elif tipo == 'DEPOSITAR':
+            cuenta = self.buscar_cuenta_global(acc['cuenta'])
+            if cuenta and cuenta.puede_retirar(acc['monto']):
+                cuenta.retirar(acc['monto'])
