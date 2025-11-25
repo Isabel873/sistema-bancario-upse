@@ -146,3 +146,15 @@ def cargar_datos_demo(self):
         ct2 = self.crear_cuenta_corriente(c1, 1953, 800)
         ct3 = self.crear_cuenta_ahorro(c2, 3800, 0.025)
         ct1.depositar(500); ct1.retirar(200); ct2.depositar(300)
+def registrar_accion_deshacer(self, accion):
+        self.pila_deshacer.push(accion)
+        self.pila_rehacer.clear()
+
+    def deshacer(self):
+        acc = self.pila_deshacer.pop()
+        if not acc: return False, "Nada que deshacer"
+        tipo = acc.get('tipo')
+        if tipo == 'RETIRAR':
+            cuenta = self.buscar_cuenta_global(acc['cuenta'])
+            if cuenta:
+                cuenta.depositar(acc['monto'])
