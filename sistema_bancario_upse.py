@@ -290,3 +290,57 @@ Commit 11: Pantallas de bienvenida y login                                      
             screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 560))
         di = small_font.render("Demo: Cédula=0912345678 | Pass=1234", True, PURPLE)
         screen.blit(di, (SCREEN_WIDTH//2-di.get_width()//2, 620))
+Commit 12: Menú principal y pantalla de cuentas                                                                   def draw_main_menu(self):
+        draw_gradient_bg(screen)
+        c = self.banco.cliente_actual
+        pygame.draw.rect(screen, BLUE, (0,0,SCREEN_WIDTH,150))
+        w = header_font.render(f"Bienvenido, {c.nombre}", True, WHITE)
+        screen.blit(w, (50,30))
+        i1 = small_font.render(f"ID: {c.id} | Cédula: {c.dni}", True, GOLD)
+        screen.blit(i1, (50,80))
+        st = normal_font.render(f"Saldo Total: ${c.get_saldo_total():.2f}", True, GREEN)
+        screen.blit(st, (50,110))
+        opts = [("Ver Mis Cuentas","accounts",GREEN),("Realizar Depósito","deposit",BLUE),
+                ("Realizar Retiro","withdraw",ORANGE),("Transferir","transfer",PURPLE),
+                ("Historial","history",LIGHT_BLUE),("Cerrar Sesión","logout",RED)]
+        y, self.buttons = 200, {}
+        for txt, key, col in opts:
+            btn = Button(SCREEN_WIDTH//2-200, y, 400, 60, txt, col, LIGHT_BLUE)
+            btn.check_hover(pygame.mouse.get_pos()); btn.draw(screen)
+            self.buttons[key] = btn; y += 75
+        b_undo = Button(SCREEN_WIDTH-220, 30, 190, 40, "DESHACER", ORANGE, GOLD)
+        b_redo = Button(SCREEN_WIDTH-220, 80, 190, 40, "REHACER", PURPLE, LIGHT_BLUE)
+        b_undo.check_hover(pygame.mouse.get_pos()); b_redo.check_hover(pygame.mouse.get_pos())
+        b_undo.draw(screen); b_redo.draw(screen)
+        self.buttons['undo'] = b_undo; self.buttons['redo'] = b_redo
+        if self.message:
+            msg = small_font.render(self.message, True, self.message_color)
+            screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 670))
+
+    def draw_accounts_screen(self):
+        draw_gradient_bg(screen)
+        title = header_font.render("MIS CUENTAS", True, GOLD)
+        screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 40))
+        c, y = self.banco.cliente_actual, 120
+        for cuenta in c.cuentas:
+            cr = pygame.Rect(150, y, 700, 120)
+            col = GREEN if cuenta.tipo=="AHORROS" else BLUE
+            pygame.draw.rect(screen, col, cr, border_radius=15)
+            pygame.draw.rect(screen, WHITE, cr, 3, border_radius=15)
+            tt = normal_font.render(f"Cuenta {cuenta.tipo}", True, WHITE)
+            screen.blit(tt, (180, y+20))
+            nt = small_font.render(f"N°: {cuenta.numero}", True, WHITE)
+            screen.blit(nt, (180, y+55))
+            trt = tiny_font.render(f"Transacciones: {len(cuenta.transacciones)}", True, WHITE)
+            screen.blit(trt, (180, y+85))
+            st = header_font.render(f"${cuenta.saldo:.2f}", True, GOLD)
+            screen.blit(st, (550, y+35))
+            y += 140
+        tr = pygame.Rect(150, y, 700, 80)
+        pygame.draw.rect(screen, PURPLE, tr, border_radius=15)
+        pygame.draw.rect(screen, WHITE, tr, 3, border_radius=15)
+        tt = header_font.render(f"SALDO TOTAL: ${c.get_saldo_total():.2f}", True, GOLD)
+        screen.blit(tt, (tr.centerx-tt.get_width()//2, y+25))
+        bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER AL MENÚ", BLUE, LIGHT_BLUE)
+        bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
+        self.buttons = {'back':bb}
