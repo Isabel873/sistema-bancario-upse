@@ -139,3 +139,10 @@ def crear_cuenta_ahorro(self, cliente, saldo=0, tasa=0.03):
         self.cuentas.insertar(cuenta)
         cliente.agregar_cuenta(cuenta)
         return cuenta
+def cargar_datos_demo(self):
+        c1 = self.registrar_cliente("Luis Torres","0912345678","luis-torres@email.com","0991234567","1234")
+        c2 = self.registrar_cliente("Valentina Ramirez","0923456789","valentina-ramirez@email.com","0992345678","1234")
+        ct1 = self.crear_cuenta_ahorro(c1, 2500, 0.03)
+        ct2 = self.crear_cuenta_corriente(c1, 1953, 800)
+        ct3 = self.crear_cuenta_ahorro(c2, 3800, 0.025)
+        ct1.depositar(500); ct1.retirar(200); ct2.depositar(300)
