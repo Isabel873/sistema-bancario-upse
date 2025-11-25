@@ -105,8 +105,8 @@ class CuentaCorriente(Cuenta):
         super().__init__(num, saldo, cliente, "CORRIENTE")
         self.limite_sobregiro = limite
     def puede_retirar(self, m): return m <= (self.saldo + self.limite_sobregiro)
- class Banco:
-    def __init__(self, nombre):
+class Banco:
+    def _init_(self, nombre):
         self.nombre, self.clientes = nombre, []
         self.cuentas, self.cola_transacciones = ArbolBinarioBusqueda(), ColaTransacciones()
         self.pila_deshacer = Pila()
