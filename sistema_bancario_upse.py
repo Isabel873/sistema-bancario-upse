@@ -178,3 +178,31 @@ self.pila_rehacer.push({'tipo':'DEPOSITAR','cuenta':acc['cuenta'],'monto':acc['m
                 return True, f"Deshacer: transferencia de ${monto:.2f} revertida ({destino_num}→{origen_num})"
             return False, "No se pudo deshacer transferencia (fondos insuficientes en cuenta destino)"
         return False, "Acción de deshacer no reconocida"
+Commit 8: Sistema de rehacer operaciones                                                                                                                                  def rehacer(self):
+        acc = self.pila_rehacer.pop()
+        if not acc: return False, "Nada que rehacer"
+        tipo = acc.get('tipo')
+        if tipo == 'RETIRAR':
+            cuenta = self.buscar_cuenta_global(acc['cuenta'])
+            if cuenta and cuenta.puede_retirar(acc['monto']):
+                cuenta.retirar(acc['monto'])
+                self.pila_deshacer.push({'tipo':'RETIRAR','cuenta':acc['cuenta'],'monto':acc['monto']})
+                return True, f"Rehacer: retiro de ${acc['monto']:.2f} en cuenta {acc['cuenta']}"
+            return False, "No se pudo rehacer retiro (fondos insuficientes)"
+        elif tipo == 'DEPOSITAR':
+            cuenta = self.buscar_cuenta_global(acc['cuenta'])
+            if cuenta:
+                cuenta.depositar(acc['monto'])
+                self.pila_deshacer.push({'tipo':'DEPOSITAR','cuenta':acc['cuenta'],'monto':acc['monto']})
+                return True, f"Rehacer: depósito de ${acc['monto']:.2f} en cuenta {acc['cuenta']}"
+            return False, "Cuenta no encontrada para rehacer"
+        elif tipo == 'TRANSFER':
+            origen_num, destino_num, monto = acc['origen'], acc['destino'], acc['monto']
+            origen = self.buscar_cuenta_global(origen_num)
+            destino = self.buscar_cuenta_global(destino_num)
+            if origen and origen.puede_retirar(monto):
+                origen.transferir_a(destino, monto)
+                self.pila_deshacer.push({'tipo':'TRANSFER','origen':origen_num,'destino':destino_num,'monto':monto})
+                return True, f"Rehacer: transferencia de ${monto:.2f} ejecutada ({origen_num}→{destino_num})"
+            return False, "No se pudo rehacer transferencia (fondos insuficientes)"
+        return False, "Acción de rehacer no reconocida"
