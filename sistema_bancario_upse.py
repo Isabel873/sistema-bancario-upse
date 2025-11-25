@@ -206,3 +206,38 @@ Commit 8: Sistema de rehacer operaciones                                        
                 return True, f"Rehacer: transferencia de ${monto:.2f} ejecutada ({origen_num}→{destino_num})"
             return False, "No se pudo rehacer transferencia (fondos insuficientes)"
         return False, "Acción de rehacer no reconocida"
+class Button:
+    def __init__(self, x, y, w, h, text, color=BLUE, hover=LIGHT_BLUE, tc=WHITE):
+        self.rect, self.text, self.color, self.hover_color, self.text_color = pygame.Rect(x,y,w,h), text, color, hover, tc
+        self.is_hovered = False
+    def draw(self, surf):
+        color = self.hover_color if self.is_hovered else self.color
+        pygame.draw.rect(surf, color, self.rect, border_radius=15)
+        pygame.draw.rect(surf, WHITE, self.rect, 3, border_radius=15)
+        ts = normal_font.render(self.text, True, self.text_color)
+        surf.blit(ts, ts.get_rect(center=self.rect.center))
+    def check_hover(self, pos): self.is_hovered = self.rect.collidepoint(pos); return self.is_hovered
+    def is_clicked(self, pos, event): return event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.rect.collidepoint(pos)
+
+class InputBox:
+    def __init__(self, x, y, w, h, label='', is_pwd=False):
+        self.rect, self.label, self.text, self.is_password, self.active = pygame.Rect(x,y,w,h), label, '', is_pwd, False
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN: self.active = self.rect.collidepoint(event.pos)
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE: self.text = self.text[:-1]
+            elif event.key != pygame.K_RETURN and len(self.text) < 40: self.text += event.unicode
+    def draw(self, surf):
+        ls = small_font.render(self.label, True, WHITE)
+        surf.blit(ls, (self.rect.x, self.rect.y-30))
+        color = LIGHT_BLUE if self.active else GRAY
+        pygame.draw.rect(surf, color, self.rect, border_radius=8)
+        pygame.draw.rect(surf, WHITE, self.rect, 2, border_radius=8)
+        dt = '•'*len(self.text) if self.is_password else self.text
+        ts = normal_font.render(dt, True, BLACK)
+        surf.blit(ts, (self.rect.x+10, self.rect.y+8))
+
+def draw_gradient_bg(surf):
+    for y in range(SCREEN_HEIGHT):
+        cv = int(10+(y/SCREEN_HEIGHT)*40)
+        pygame.draw.line(surf, (cv,cv//2,cv+20), (0,y), (SCREEN_WIDTH,y))
