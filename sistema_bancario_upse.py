@@ -126,3 +126,16 @@ class CuentaCorriente(Cuenta):
 
     def buscar_cuenta_global(self, numero):
         return self.cuentas.buscar(numero)
+def crear_cuenta_ahorro(self, cliente, saldo=0, tasa=0.03):
+        self.contador_cuentas += 1
+        cuenta = CuentaAhorro(self.contador_cuentas, saldo, cliente, tasa)
+        self.cuentas.insertar(cuenta)
+        cliente.agregar_cuenta(cuenta)
+        return cuenta
+
+    def crear_cuenta_corriente(self, cliente, saldo=0, limite=500):
+        self.contador_cuentas += 1
+        cuenta = CuentaCorriente(self.contador_cuentas, saldo, cliente, limite)
+        self.cuentas.insertar(cuenta)
+        cliente.agregar_cuenta(cuenta)
+        return cuenta
