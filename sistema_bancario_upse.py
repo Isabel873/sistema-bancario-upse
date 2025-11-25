@@ -344,3 +344,43 @@ Commit 12: Menú principal y pantalla de cuentas                                
         bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER AL MENÚ", BLUE, LIGHT_BLUE)
         bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
         self.buttons = {'back':bb}
+def handle_deposit(self):
+        if self.amount_input and self.selected_account is not None:
+            try:
+                m = float(self.amount_input.text)
+                if m > 0:
+                    cuenta = self.banco.cliente_actual.cuentas[self.selected_account]
+                    if cuenta.depositar(m):
+                        self.banco.registrar_accion_deshacer({'tipo':'DEPOSITAR','cuenta':cuenta.numero,'monto':m})
+                        self.message, self.message_color = f"¡Depósito de ${m:.2f} exitoso!", GREEN
+                        self.amount_input.text, self.selected_account, self.amount_input = "", None, None
+                else:
+                    self.message, self.message_color = "Monto debe ser mayor a 0", RED
+            except:
+                self.message, self.message_color = "Ingrese un monto válido", RED
+
+    def draw_deposit_screen(self):
+        draw_gradient_bg(screen)
+        title = header_font.render("REALIZAR DEPÓSITO", True, GOLD)
+        screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 50))
+        c, y, self.buttons = self.banco.cliente_actual, 150, {}
+        st = normal_font.render("Seleccione una cuenta:", True, WHITE)
+        screen.blit(st, (SCREEN_WIDTH//2-st.get_width()//2, 120))
+        for i, cuenta in enumerate(c.cuentas):
+            btn = Button(SCREEN_WIDTH//2-200, y, 400, 60, f"{cuenta.tipo} N°{cuenta.numero} ${cuenta.saldo:.2f}",
+                        GREEN if cuenta.tipo=="AHORROS" else BLUE, LIGHT_BLUE)
+            btn.check_hover(pygame.mouse.get_pos()); btn.draw(screen)
+            self.buttons[f'cuenta_{i}'] = btn; y += 75
+        if self.selected_account is not None:
+            if self.amount_input is None:
+                self.amount_input = InputBox(SCREEN_WIDTH//2-150, y+20, 300, 50, "Monto a depositar")
+            self.amount_input.draw(screen)
+            bd = Button(SCREEN_WIDTH//2-150, y+100, 300, 60, "DEPOSITAR", GREEN, LIGHT_BLUE)
+            bd.check_hover(pygame.mouse.get_pos()); bd.draw(screen)
+            self.buttons['confirm'] = bd
+        bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER", RED, ORANGE)
+        bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
+        self.buttons['back'] = bb
+        if self.message:
+            msg = normal_font.render(self.message, True, self.message_color)
+            screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 580))
