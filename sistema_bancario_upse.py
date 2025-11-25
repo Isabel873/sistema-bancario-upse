@@ -105,3 +105,24 @@ class CuentaCorriente(Cuenta):
         super().__init__(num, saldo, cliente, "CORRIENTE")
         self.limite_sobregiro = limite
     def puede_retirar(self, m): return m <= (self.saldo + self.limite_sobregiro)
+ class Banco:
+    def __init__(self, nombre):
+        self.nombre, self.clientes = nombre, []
+        self.cuentas, self.cola_transacciones = ArbolBinarioBusqueda(), ColaTransacciones()
+        self.pila_deshacer = Pila()
+        self.pila_rehacer = Pila()
+        self.contador_cuentas, self.contador_clientes, self.cliente_actual = 1000, 1, None
+
+    def registrar_cliente(self, nom, dni, em, tel, pwd):
+        cliente = Cliente(f"C{self.contador_clientes:03d}", nom, dni, em, tel, pwd)
+        self.clientes.append(cliente)
+        self.contador_clientes += 1
+        return cliente
+
+    def buscar_cliente_por_dni(self, dni):
+        for c in self.clientes:
+            if c.dni == dni: return c
+        return None
+
+    def buscar_cuenta_global(self, numero):
+        return self.cuentas.buscar(numero)
