@@ -7,6 +7,7 @@ Sistema de gestión bancaria desarrollado en Python para la materia de Programac
 - Keyla HolguÍn
 - Anete Ramos
 - Gregory Pesántez
+- Anthony Asencio
 ## Fecha
 Noviembre 2025
 ## Funcionalidades
