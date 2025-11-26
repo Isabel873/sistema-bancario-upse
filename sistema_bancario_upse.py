@@ -563,3 +563,39 @@ def draw_transfer_screen(self):
                                 self.handle_undo()
                             elif name == 'redo':
                                 self.handle_redo()
+            elif self.current_screen == "accounts":
+            if name == "back":
+                                self.current_screen = "main_menu"
+                        elif self.current_screen == "deposit":
+                            if name.startswith("cuenta_"):
+                                self.selected_account = int(name.split('_')[1])
+                                self.message = "Ingrese el monto"
+                            elif name == "confirm":
+                                self.handle_deposit()
+                            elif name == "back":
+                                self.current_screen = "main_menu"
+                                self.selected_account, self.amount_input = None, None
+                        elif self.current_screen == "withdraw":
+                            if name.startswith("cuenta_"):
+                                self.selected_account = int(name.split('_')[1])
+                                self.message = "Ingrese el monto"
+                            elif name == "confirm":
+                                self.handle_withdraw()
+                            elif name == "back":
+                                self.current_screen = "main_menu"
+                                self.selected_account, self.amount_input = None, None
+                        elif self.current_screen == "transfer":
+                            if name.startswith("origen_"):
+                                self.selected_account = int(name.split('_')[1])
+                                self.message = "Seleccione cuenta destino"
+                            elif name.startswith("destino_"):
+                                self.selected_dest_account = int(name.split('_')[1])
+                                self.message = "Ingrese el monto"
+                            elif name == "confirm":
+                                self.handle_transfer()
+                            elif name == "back":
+                                self.current_screen = "main_menu"
+                                self.selected_account, self.selected_dest_account, self.amount_input = None, None, None
+                        elif self.current_screen == "history":
+                            if name == "back":
+                                self.current_screen = "main_menu"
