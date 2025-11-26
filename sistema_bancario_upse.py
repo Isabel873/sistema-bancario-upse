@@ -423,3 +423,26 @@ def handle_withdraw(self):
         if self.message:
             msg = normal_font.render(self.message, True, self.message_color)
             screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 580))
+def handle_transfer(self):
+        if self.amount_input and self.selected_account is not None and self.selected_dest_account is not None:
+            try:
+                m = float(self.amount_input.text)
+                cliente = self.banco.cliente_actual
+                origen = cliente.cuentas[self.selected_account]
+                destino = cliente.cuentas[self.selected_dest_account]
+                if origen.transferir_a(destino, m):
+                    self.banco.registrar_accion_deshacer({'tipo':'TRANSFER','origen':origen.numero,'destino':destino.numero,'monto':m})
+                    self.message, self.message_color = f"¡Transferencia de ${m:.2f} exitosa!", GREEN
+                    self.selected_account, self.selected_dest_account, self.amount_input = None, None, None
+                else:
+                    self.message, self.message_color = "Saldo insuficiente", RED
+            except:
+                self.message, self.message_color = "Ingrese un monto válido", RED
+
+    def handle_undo(self):
+        ok, msg = self.banco.deshacer()
+        self.message, self.message_color = (msg, GREEN) if ok else (msg, RED)
+
+    def handle_redo(self):
+        ok, msg = self.banco.rehacer()
+        self.message, self.message_color = (msg, GREEN) if ok else (msg, RED)
