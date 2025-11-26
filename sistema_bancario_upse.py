@@ -513,3 +513,53 @@ def draw_transfer_screen(self):
         bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER", BLUE, LIGHT_BLUE)
         bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
         self.buttons = {'back':bb}
+    def run(self):
+        running = True
+        while running:
+            mp = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+                if self.current_screen == "login":
+                    for box in self.input_boxes.values():
+                        box.handle_event(event)
+
+                if self.current_screen in ["deposit", "withdraw", "transfer"] and self.amount_input:
+                    self.amount_input.handle_event(event)
+
+                for name, button in list(self.buttons.items()):
+                    if button.is_clicked(mp, event):
+                        if self.current_screen == "welcome":
+                            if name == "login":
+                                self.current_screen, self.input_boxes = "login", {}
+                            elif name == "demo":
+                                if self.banco.clientes:
+                                    self.banco.cliente_actual = self.banco.clientes[0]
+                                    self.current_screen, self.message = "main_menu", "Modo DEMO"
+                        elif self.current_screen == "login":
+                            if name == "entrar":
+                                self.handle_login()
+                            elif name == "back":
+                                self.current_screen, self.input_boxes = "welcome", {}
+                        elif self.current_screen == "main_menu":
+                            if name == "accounts":
+                                self.current_screen = "accounts"
+                            elif name == "deposit":
+                                self.current_screen = "deposit"
+                                self.selected_account, self.amount_input = None, None
+                            elif name == "withdraw":
+                                self.current_screen = "withdraw"
+                                self.selected_account, self.amount_input = None, None
+                            elif name == "transfer":
+                                self.current_screen = "transfer"
+                                self.selected_account, self.selected_dest_account, self.amount_input = None, None, None
+                            elif name == "history":
+                                self.current_screen = "history"
+                            elif name == "logout":
+                                self.current_screen, self.banco.cliente_actual = "welcome", None
+                                self.message = "Sesión cerrada"
+                            elif name == 'undo':
+                                self.handle_undo()
+                            elif name == 'redo':
+                                self.handle_redo()
