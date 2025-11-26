@@ -446,3 +446,43 @@ def handle_transfer(self):
     def handle_redo(self):
         ok, msg = self.banco.rehacer()
         self.message, self.message_color = (msg, GREEN) if ok else (msg, RED)
+def draw_transfer_screen(self):
+        draw_gradient_bg(screen)
+        title = header_font.render("TRANSFERIR", True, GOLD)
+        screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 40))
+        c, self.buttons = self.banco.cliente_actual, {}
+        if self.selected_account is None:
+            st = normal_font.render("Seleccione cuenta origen:", True, WHITE)
+            screen.blit(st, (SCREEN_WIDTH//2-st.get_width()//2, 100))
+            y = 150
+            for i, cuenta in enumerate(c.cuentas):
+                btn = Button(SCREEN_WIDTH//2-200, y, 400, 60, f"{cuenta.tipo} N°{cuenta.numero} ${cuenta.saldo:.2f}",
+                            GREEN if cuenta.tipo=="AHORROS" else BLUE, LIGHT_BLUE)
+                btn.check_hover(pygame.mouse.get_pos()); btn.draw(screen)
+                self.buttons[f'origen_{i}'] = btn; y += 75
+        elif self.selected_dest_account is None:
+            st = normal_font.render("Seleccione cuenta destino:", True, WHITE)
+            screen.blit(st, (SCREEN_WIDTH//2-st.get_width()//2, 100))
+            y = 150
+            for i, cuenta in enumerate(c.cuentas):
+                if i != self.selected_account:
+                    btn = Button(SCREEN_WIDTH//2-200, y, 400, 60, f"{cuenta.tipo} N°{cuenta.numero} ${cuenta.saldo:.2f}",
+                                GREEN if cuenta.tipo=="AHORROS" else BLUE, LIGHT_BLUE)
+                    btn.check_hover(pygame.mouse.get_pos()); btn.draw(screen)
+                    self.buttons[f'destino_{i}'] = btn; y += 75
+        else:
+            co, cd = c.cuentas[self.selected_account], c.cuentas[self.selected_dest_account]
+            it = small_font.render(f"De: {co.numero} → A: {cd.numero}", True, WHITE)
+            screen.blit(it, (SCREEN_WIDTH//2-it.get_width()//2, 100))
+            if self.amount_input is None:
+                self.amount_input = InputBox(SCREEN_WIDTH//2-150, 170, 300, 50, "Monto a transferir")
+            self.amount_input.draw(screen)
+            bt = Button(SCREEN_WIDTH//2-150, 250, 300, 60, "TRANSFERIR", PURPLE, LIGHT_BLUE)
+            bt.check_hover(pygame.mouse.get_pos()); bt.draw(screen)
+            self.buttons['confirm'] = bt
+        bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER", RED, ORANGE)
+        bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
+        self.buttons['back'] = bb
+        if self.message:
+            msg = small_font.render(self.message, True, self.message_color)
+            screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 350))
