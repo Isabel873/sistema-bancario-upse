@@ -438,7 +438,6 @@ def handle_transfer(self):
                     self.message, self.message_color = "Saldo insuficiente", RED
             except:
                 self.message, self.message_color = "Ingrese un monto válido", RED
-
     def handle_undo(self):
         ok, msg = self.banco.deshacer()
         self.message, self.message_color = (msg, GREEN) if ok else (msg, RED)
@@ -486,3 +485,31 @@ def draw_transfer_screen(self):
         if self.message:
             msg = small_font.render(self.message, True, self.message_color)
             screen.blit(msg, (SCREEN_WIDTH//2-msg.get_width()//2, 350))
+    def draw_history_screen(self):
+        draw_gradient_bg(screen)
+        title = header_font.render("HISTORIAL", True, GOLD)
+        screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 30))
+        c, y = self.banco.cliente_actual, 100
+        for cuenta in c.cuentas:
+            ct = small_font.render(f"Cuenta {cuenta.tipo} N°{cuenta.numero}", True, LIGHT_BLUE)
+            screen.blit(ct, (100, y)); y += 35
+            if not cuenta.transacciones:
+                nt = tiny_font.render("No hay transacciones", True, GRAY)
+                screen.blit(nt, (120, y)); y += 30
+            else:
+                for trans in cuenta.transacciones[-10:]:
+                    tr = pygame.Rect(100, y, 800, 60)
+                    col = GREEN if 'DEPOSITO' in trans['tipo'] or 'RECIBIDA' in trans['tipo'] else ORANGE
+                    pygame.draw.rect(screen, col, tr, border_radius=8)
+                    pygame.draw.rect(screen, WHITE, tr, 2, border_radius=8)
+                    tt = tiny_font.render(trans['tipo'], True, WHITE)
+                    screen.blit(tt, (110, y+5))
+                    mt = small_font.render(f"${trans['monto']:.2f}", True, WHITE)
+                    screen.blit(mt, (700, y+15))
+                    ft = tiny_font.render(trans['fecha'], True, WHITE)
+                    screen.blit(ft, (110, y+35))
+                    y += 70
+            y += 20
+        bb = Button(SCREEN_WIDTH//2-150, 620, 300, 50, "VOLVER", BLUE, LIGHT_BLUE)
+        bb.check_hover(pygame.mouse.get_pos()); bb.draw(screen)
+        self.buttons = {'back':bb}
