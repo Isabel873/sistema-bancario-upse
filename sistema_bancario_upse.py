@@ -445,7 +445,7 @@ def handle_transfer(self):
     def handle_redo(self):
         ok, msg = self.banco.rehacer()
         self.message, self.message_color = (msg, GREEN) if ok else (msg, RED)
-def draw_transfer_screen(self):
+    def draw_transfer_screen(self):
         draw_gradient_bg(screen)
         title = header_font.render("TRANSFERIR", True, GOLD)
         screen.blit(title, (SCREEN_WIDTH//2-title.get_width()//2, 40))
@@ -563,8 +563,8 @@ def draw_transfer_screen(self):
                                 self.handle_undo()
                             elif name == 'redo':
                                 self.handle_redo()
-            elif self.current_screen == "accounts":
-            if name == "back":
+                            elif self.current_screen == "accounts":
+                            if name == "back":
                                 self.current_screen = "main_menu"
                         elif self.current_screen == "deposit":
                             if name.startswith("cuenta_"):
@@ -599,3 +599,29 @@ def draw_transfer_screen(self):
                         elif self.current_screen == "history":
                             if name == "back":
                                 self.current_screen = "main_menu"
+                if self.current_screen == "welcome":
+                self.draw_welcome_screen()
+                elif self.current_screen == "login":
+                self.draw_login_screen()
+            elif self.current_screen == "main_menu":
+                self.draw_main_menu()
+            elif self.current_screen == "accounts":
+                self.draw_accounts_screen()
+            elif self.current_screen == "deposit":
+                self.draw_deposit_screen()
+            elif self.current_screen == "withdraw":
+                self.draw_withdraw_screen()
+            elif self.current_screen == "transfer":
+                self.draw_transfer_screen()
+            elif self.current_screen == "history":
+                self.draw_history_screen()
+
+            pygame.display.flip()
+            clock.tick(FPS)
+
+        pygame.quit()
+        sys.exit()
+
+if _name_ == "_main_":
+    app = BancoApp()
+    app.run()
